@@ -1,7 +1,6 @@
 import os
 
 current_directory = os.getcwd()
-
 for filename in os.listdir(current_directory):
 
     if filename.endswith('.et'):
