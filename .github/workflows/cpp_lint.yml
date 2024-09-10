@@ -1,0 +1,19 @@
+name: C++ Lint
+
+on: pull_request
+
+jobs:
+  cpp-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Format and Lint C++ Code
+      uses: DoozyX/clang-format-lint-action@v0.11
+      with:
+        source: '.'
+        extensions: 'cc,cpp,h,hh'
+        clangFormatVersion: 11
+        style: file
