@@ -68,6 +68,7 @@ class ETFeederNode {
   uint32_t comm_tag_;
 
   // Added by myself
+
   bool is_tp_allreduce_;
   bool is_fwd_;
 };
