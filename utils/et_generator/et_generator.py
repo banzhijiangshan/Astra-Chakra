@@ -293,14 +293,14 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    one_metadata_node_all_types(args.num_npus)
+    #one_metadata_node_all_types(args.num_npus)
 
-    one_remote_mem_load_node(args.num_npus, args.default_tensor_size)
-    one_remote_mem_store_node(args.num_npus, args.default_tensor_size)
+    #one_remote_mem_load_node(args.num_npus, args.default_tensor_size)
+    #one_remote_mem_store_node(args.num_npus, args.default_tensor_size)
 
-    one_comp_node(args.num_npus, args.default_runtime)
-    two_comp_nodes_independent(args.num_npus, args.default_runtime)
-    two_comp_nodes_dependent(args.num_npus, args.default_runtime)
+    #one_comp_node(args.num_npus, args.default_runtime)
+    #two_comp_nodes_independent(args.num_npus, args.default_runtime)
+    #two_comp_nodes_dependent(args.num_npus, args.default_runtime)
 
     one_comm_coll_node_allreduce(args.num_npus, args.num_dims, args.default_comm_size)
     one_comm_coll_node_alltoall(args.num_npus, args.num_dims, args.default_comm_size)
