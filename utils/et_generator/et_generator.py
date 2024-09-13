@@ -255,6 +255,176 @@ def one_comm_coll_node_reducescatter(num_npus: int, num_dims: int, comm_size: in
             attr = get_involved_dim_attr(num_dims)
             node.attr.append(attr)
             encode_message(et, node)
+    
+def parallel_3D_32_nodes(num_npus: int, num_dims: int, comm_size: int) -> None:
+    for npu_id in range(8):
+        output_filename = f"parallel_3D_32_nodes.{npu_id}.et"
+        with open(output_filename, "wb") as et:
+            encode_message(et, GlobalMetadata(version="0.0.4"))
+
+            node = get_node("ALL_REDUCE", COMM_COLL_NODE)
+            node.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node.attr.append(get_comm_type_attr(ALL_REDUCE))
+            node.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node.attr.append(attr)
+            node.attr.append(ChakraAttr(name="is_tp_allreduce", bool_val=True))
+            encode_message(et, node)
+            
+            node1 = get_node("P2P", COMM_SEND_NODE)
+            node1.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node1.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node1.attr.append(attr)
+            node1.attr.append(ChakraAttr(name="is_fwd", bool_val=True))
+            node1.data_deps.append(node.id)
+            encode_message(et, node1)
+
+            node2 = get_node("P2P", COMM_RECV_NODE)
+            node2.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node2.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node2.attr.append(attr)
+            node2.attr.append(ChakraAttr(name="is_fwd", bool_val=False))
+            node2.data_deps.append(node1.id)
+            encode_message(et, node2)
+
+            node3 = get_node("ALL_REDUCE", COMM_COLL_NODE)
+            node3.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node3.attr.append(get_comm_type_attr(ALL_REDUCE))
+            node3.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node3.attr.append(attr)
+            node3.attr.append(ChakraAttr(name="is_tp_allreduce", bool_val=False))
+            node3.data_deps.append(node2.id)
+            encode_message(et, node3)
+
+    for npu_id in range(8, 16):
+        output_filename = f"parallel_3D_32_nodes.{npu_id}.et"
+        with open(output_filename, "wb") as et:
+            encode_message(et, GlobalMetadata(version="0.0.4"))
+
+            node = get_node("ALL_REDUCE", COMM_COLL_NODE)
+            node.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node.attr.append(get_comm_type_attr(ALL_REDUCE))
+            node.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node.attr.append(attr)
+            node.attr.append(ChakraAttr(name="is_tp_allreduce", bool_val=True))
+            encode_message(et, node)
+
+            node1 = get_node("P2P", COMM_RECV_NODE)
+            node1.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node1.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node1.attr.append(attr)
+            node1.attr.append(ChakraAttr(name="is_fwd", bool_val=True))
+            node1.data_deps.append(node.id)
+            encode_message(et, node1)
+
+            node2 = get_node("P2P", COMM_SEND_NODE)
+            node2.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node2.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node2.attr.append(attr)
+            node2.attr.append(ChakraAttr(name="is_fwd", bool_val=False))
+            node2.data_deps.append(node1.id)
+            encode_message(et, node2)
+
+            node3 = get_node("ALL_REDUCE", COMM_COLL_NODE)
+            node3.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node3.attr.append(get_comm_type_attr(ALL_REDUCE))
+            node3.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node3.attr.append(attr)
+            node3.attr.append(ChakraAttr(name="is_tp_allreduce", bool_val=False))
+            node3.data_deps.append(node2.id)
+            encode_message(et, node3)
+    
+    for npu_id in range(16, 24):
+        output_filename = f"parallel_3D_32_nodes.{npu_id}.et"
+        with open(output_filename, "wb") as et:
+            encode_message(et, GlobalMetadata(version="0.0.4"))
+
+            node = get_node("ALL_REDUCE", COMM_COLL_NODE)
+            node.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node.attr.append(get_comm_type_attr(ALL_REDUCE))
+            node.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node.attr.append(attr)
+            node.attr.append(ChakraAttr(name="is_tp_allreduce", bool_val=True))
+            encode_message(et, node)
+
+            node1 = get_node("P2P", COMM_SEND_NODE)
+            node1.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node1.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node1.attr.append(attr)
+            node1.attr.append(ChakraAttr(name="is_fwd", bool_val=True))
+            node1.data_deps.append(node.id)
+            encode_message(et, node1)
+
+            node2 = get_node("P2P", COMM_RECV_NODE)
+            node2.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node2.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node2.attr.append(attr)
+            node2.attr.append(ChakraAttr(name="is_fwd", bool_val=False))
+            node2.data_deps.append(node1.id)
+            encode_message(et, node2)
+
+            node3 = get_node("ALL_REDUCE", COMM_COLL_NODE)
+            node3.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node3.attr.append(get_comm_type_attr(ALL_REDUCE))
+            node3.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node3.attr.append(attr)
+            node3.attr.append(ChakraAttr(name="is_tp_allreduce", bool_val=False))
+            node3.data_deps.append(node2.id)
+            encode_message(et, node3)
+        
+    for npu_id in range(24, 32):
+        output_filename = f"parallel_3D_32_nodes.{npu_id}.et"
+        with open(output_filename, "wb") as et:
+            encode_message(et, GlobalMetadata(version="0.0.4"))
+
+            node = get_node("ALL_REDUCE", COMM_COLL_NODE)
+            node.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node.attr.append(get_comm_type_attr(ALL_REDUCE))
+            node.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node.attr.append(attr)
+            node.attr.append(ChakraAttr(name="is_tp_allreduce", bool_val=True))
+            encode_message(et, node)
+
+            node1 = get_node("P2P", COMM_RECV_NODE)
+            node1.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node1.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node1.attr.append(attr)
+            node1.attr.append(ChakraAttr(name="is_fwd", bool_val=True))
+            node1.data_deps.append(node.id)
+            encode_message(et, node1)
+
+            node2 = get_node("P2P", COMM_SEND_NODE)
+            node2.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node2.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node2.attr.append(attr)
+            node2.attr.append(ChakraAttr(name="is_fwd", bool_val=False))
+            node2.data_deps.append(node1.id)
+            encode_message(et, node2)
+
+            node3 = get_node("ALL_REDUCE", COMM_COLL_NODE)
+            node3.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node3.attr.append(get_comm_type_attr(ALL_REDUCE))
+            node3.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            attr = get_involved_dim_attr(num_dims)
+            node3.attr.append(attr)
+            node3.attr.append(ChakraAttr(name="is_tp_allreduce", bool_val=False))
+            node3.data_deps.append(node2.id)
+            encode_message(et, node3)
+
 
 
 def main() -> None:
@@ -306,6 +476,7 @@ def main() -> None:
     one_comm_coll_node_alltoall(args.num_npus, args.num_dims, args.default_comm_size)
     one_comm_coll_node_allgather(args.num_npus, args.num_dims, args.default_comm_size)
     one_comm_coll_node_reducescatter(args.num_npus, args.num_dims, args.default_comm_size)
+    parallel_3D_32_nodes(args.num_npus, args.num_dims, args.default_comm_size)
 
 
 if __name__ == "__main__":
