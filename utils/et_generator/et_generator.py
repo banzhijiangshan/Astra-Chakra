@@ -461,22 +461,45 @@ def main() -> None:
         default=65536,
         help="Default communication size of communication nodes"
     )
+    
+    # define the operations to generate
+    parser.add_argument('--mem_load', action='store_true', help="one_remote_mem_load_node")
+    parser.add_argument('--mem_store', action='store_true', help="one_remote_mem_store_node")
+    parser.add_argument('--one_comp', action='store_true', help="one_comp_node")
+    parser.add_argument('--two_comp_independent', action='store_true', help="two_comp_nodes_independent")
+    parser.add_argument('--two_comp_dependent', action='store_true', help="two_comp_nodes_dependent")
+    parser.add_argument('--allreduce', action='store_true', help='Run allreduce operation')
+    parser.add_argument('--alltoall', action='store_true', help='Run alltoall operation')
+    parser.add_argument('--allgather', action='store_true', help='Run allgather operation')
+    parser.add_argument('--reducescatter', action='store_true', help='Run reducescatter operation')
+    parser.add_argument('--parallel_3D_32_nodes', action='store_true', help='Run parallel_3D_32_nodes operation')
+
     args = parser.parse_args()
 
-    #one_metadata_node_all_types(args.num_npus)
+    one_metadata_node_all_types(args.num_npus)
 
-    #one_remote_mem_load_node(args.num_npus, args.default_tensor_size)
-    #one_remote_mem_store_node(args.num_npus, args.default_tensor_size)
+    if args.mem_load:
+        one_remote_mem_load_node(args.num_npus, args.default_tensor_size)
+    if args.mem_store:    
+        one_remote_mem_store_node(args.num_npus, args.default_tensor_size)
 
-    #one_comp_node(args.num_npus, args.default_runtime)
-    #two_comp_nodes_independent(args.num_npus, args.default_runtime)
-    #two_comp_nodes_dependent(args.num_npus, args.default_runtime)
+    if args.one_comp:
+        one_comp_node(args.num_npus, args.default_runtime)
+    if args.two_comp_independent:
+        two_comp_nodes_independent(args.num_npus, args.default_runtime)
+    if args.two_comp_dependent:
+        two_comp_nodes_dependent(args.num_npus, args.default_runtime)
 
-    one_comm_coll_node_allreduce(args.num_npus, args.num_dims, args.default_comm_size)
-    one_comm_coll_node_alltoall(args.num_npus, args.num_dims, args.default_comm_size)
-    one_comm_coll_node_allgather(args.num_npus, args.num_dims, args.default_comm_size)
-    one_comm_coll_node_reducescatter(args.num_npus, args.num_dims, args.default_comm_size)
-    parallel_3D_32_nodes(args.num_npus, args.num_dims, args.default_comm_size)
+    if args.allreduce:
+        one_comm_coll_node_allreduce(args.num_npus, args.num_dims, args.default_comm_size)
+    if args.alltoall:
+        one_comm_coll_node_alltoall(args.num_npus, args.num_dims, args.default_comm_size)
+    if args.allgather:
+        one_comm_coll_node_allgather(args.num_npus, args.num_dims, args.default_comm_size)
+    if args.reducescatter:
+        one_comm_coll_node_reducescatter(args.num_npus, args.num_dims, args.default_comm_size)
+    if args.parallel_3D_32_nodes:
+        parallel_3D_32_nodes(args.num_npus, args.num_dims, args.default_comm_size)
 
 
 if __name__ == "__main__":
