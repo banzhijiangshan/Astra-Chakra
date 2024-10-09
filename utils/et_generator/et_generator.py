@@ -255,6 +255,39 @@ def one_comm_coll_node_reducescatter(num_npus: int, num_dims: int, comm_size: in
             attr = get_involved_dim_attr(num_dims)
             node.attr.append(attr)
             encode_message(et, node)
+
+def one_comm_coll_node_send_recv(num_npus: int, num_dims: int, comm_size: int) -> None:
+    half_num_npus = num_npus // 2
+    for npu_id in range(half_num_npus):
+        output_filename = f"one_comm_coll_node_send_recv.{npu_id}.et"
+        with open(output_filename, "wb") as et:
+            encode_message(et, GlobalMetadata(version="0.0.4"))
+
+            node1 = get_node("P2P", COMM_SEND_NODE)
+            node1.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node1.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            node1.attr.append(ChakraAttr(name="comm_src", uint64_val=npu_id))
+            node1.attr.append(ChakraAttr(name="comm_dst", uint64_val=npu_id + half_num_npus))
+            attr = get_involved_dim_attr(num_dims)
+            node1.attr.append(attr)
+            node1.attr.append(ChakraAttr(name="is_fwd", bool_val=True))
+            encode_message(et, node1)
+    for npu_id in range(half_num_npus, num_npus):
+        output_filename = f"one_comm_coll_node_send_recv.{npu_id}.et"
+        with open(output_filename, "wb") as et:
+            encode_message(et, GlobalMetadata(version="0.0.4"))
+
+            node2 = get_node("P2P", COMM_RECV_NODE)
+            node2.attr.append(ChakraAttr(name="is_cpu_op", bool_val=False))
+            node2.attr.append(ChakraAttr(name="comm_size", uint64_val=comm_size))
+            node2.attr.append(ChakraAttr(name="comm_src", uint64_val=npu_id - half_num_npus))
+            node2.attr.append(ChakraAttr(name="comm_dst", uint64_val=npu_id))
+            attr = get_involved_dim_attr(num_dims)
+            node2.attr.append(attr)
+            node2.attr.append(ChakraAttr(name="is_fwd", bool_val=False))
+            node2.data_deps.append(node1.id)
+            encode_message(et, node2)
+            
     
 def parallel_3D_32_nodes(num_npus: int, num_dims: int, comm_size: int) -> None:
     for npu_id in range(8):
@@ -473,6 +506,7 @@ def main() -> None:
     parser.add_argument('--allgather', action='store_true', help='Run allgather operation')
     parser.add_argument('--reducescatter', action='store_true', help='Run reducescatter operation')
     parser.add_argument('--parallel_3D_32_nodes', action='store_true', help='Run parallel_3D_32_nodes operation')
+    parser.add_argument('--p2p', action='store_true', help='Run p2p operation')
 
     args = parser.parse_args()
 
@@ -500,7 +534,8 @@ def main() -> None:
         one_comm_coll_node_reducescatter(args.num_npus, args.num_dims, args.default_comm_size)
     if args.parallel_3D_32_nodes:
         parallel_3D_32_nodes(args.num_npus, args.num_dims, args.default_comm_size)
-
+    if args.p2p:
+        one_comm_coll_node_send_recv(args.num_npus, args.num_dims, args.default_comm_size)
 
 if __name__ == "__main__":
     main()
