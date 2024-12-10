@@ -40,7 +40,7 @@ class ETFeederNode {
   bool is_tp_allreduce();
   bool is_fwd();
 
- private:
+ public:
   void assign_attr_val(
       std::shared_ptr<ChakraProtoMsg::Node> node,
       int i,

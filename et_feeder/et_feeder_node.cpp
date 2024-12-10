@@ -8,7 +8,7 @@ ETFeederNode::ETFeederNode(std::shared_ptr<ChakraProtoMsg::Node> node) {
   this->id_ = node->id();
   this->name_ = node->name();
   this->runtime_ = node->duration_micros();
-  this->is_cpu_op_ = true;
+  this->is_cpu_op_ = false;
   for (int i = 0; i < node->attr_size(); i++) {
     string attr_name = node->attr(i).name();
     if (attr_name == "is_cpu_op") {
