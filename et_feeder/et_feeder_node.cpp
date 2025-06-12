@@ -36,6 +36,8 @@ ETFeederNode::ETFeederNode(std::shared_ptr<ChakraProtoMsg::Node> node) {
       assign_attr_val(node, i, (void*)(&is_tp_allreduce_));
     } else if (attr_name == "is_fwd") {
       assign_attr_val(node, i, (void*)(&is_fwd_));
+    } else if (attr_name == "comm_group") {
+      assign_attr_val(node, i, (void*)(&comm_group_));
     }
   }
 }
@@ -276,4 +278,8 @@ bool ETFeederNode::is_tp_allreduce() {
 
 bool ETFeederNode::is_fwd() {
   return is_fwd_;
+}
+
+uint32_t ETFeederNode::comm_group() {
+  return comm_group_;
 }

@@ -39,6 +39,7 @@ class ETFeederNode {
   // Added by myself
   bool is_tp_allreduce();
   bool is_fwd();
+  uint32_t comm_group();
 
  public:
   void assign_attr_val(
@@ -71,6 +72,7 @@ class ETFeederNode {
 
   bool is_tp_allreduce_;
   bool is_fwd_;
+  uint32_t comm_group_;
 };
 
 } // namespace Chakra
